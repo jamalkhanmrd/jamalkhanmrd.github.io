@@ -501,11 +501,23 @@ label{display:block;font-size:10px;color:#003d42;letter-spacing:0.12em;
 
 @media(max-width:768px){
   .hero-grid,.agrid,.contact-grid{grid-template-columns:1fr;}
-  .port-wrap{display:none;}
+  /* Show photo on mobile — centered above the text */
+  .hero-grid{display:flex !important;flex-direction:column-reverse !important;}
+  .port-wrap{
+    display:flex !important;
+    justify-content:center !important;
+    margin-bottom:24px;
+  }
+  .port-img{
+    width:160px !important;
+    height:200px !important;
+  }
+  .port-r1,.port-r2,.port-glow{display:none !important;}
+  .dline{display:none !important;}
   .pnav-links{display:none;}
   .sec,.hero{padding:60px 20px;}
   .pnav{padding:14px 20px;}
-  .pfooter{padding:16px 20px;}
+  .pfooter{padding:16px 20px;flex-wrap:wrap;gap:8px;font-size:10px;}
 }
 </style>
 </head>
@@ -748,7 +760,8 @@ var S = {
   },
   skills: ["Python","Pandas","NumPy","Scikit-learn","TensorFlow","PyTorch","Matplotlib","Seaborn","SQL","Jupyter","Git","Docker","Power BI","Excel","Plotly","Tableau","VS Code","Streamlit","Keras"],
   projs:  [{"id":2,"title":"Data Analysis","desc":"Add your project description here.","tech":"Pandas, Seaborn","url":"","met":"","metv":""}]
-};
+};;
+
 var SOCS=[
   {k:"github",   l:"GitHub",    p:"", i:"🐙"},
   {k:"kaggle",   l:"Kaggle",    p:"", i:"📊"},
@@ -852,7 +865,7 @@ function build(){
   document.getElementById("pview").style.display="block";
   if(d.photo) applyBg(d.photo);
   window.scrollTo(0,0);
-  setTimeout(initRv,100);
+  // initRv called at load time
 }
 
 
@@ -1175,20 +1188,15 @@ function build(){
   saveState();
   applyBg(d.photo);
   window.scrollTo(0,0);
-  setTimeout(initRv,100);
+  // initRv called at load time
 }
 
 // ── TYPING EFFECT ──
 function tw(id,txt,spd){
+  // Show name instantly — no typing delay for visitors
   var el=document.getElementById(id);if(!el)return;
-  el.innerHTML="";var i=0;
-  var iv=setInterval(function(){
-    el.innerHTML=txt.slice(0,++i)+'<span class="cur">|</span>';
-    if(i>=txt.length){clearInterval(iv);setTimeout(function(){el.innerHTML=txt;},1200);}
-  },spd);
+  el.innerHTML=txt;
 }
-
-// ── SCROLL REVEAL ──
 function initRv(){
   // Gather ALL elements that need reveal
   var allEls=document.querySelectorAll('.rv,.scard,.pcard,.sk-tag');
@@ -1444,8 +1452,13 @@ function scrollTo(id,ev){
   animate();
 })();
 
-// ── ALWAYS SHOW PORTFOLIO — no wizard for visitors ──
-build();
+// ── SHOW PORTFOLIO INSTANTLY ──
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', function(){build();setTimeout(initRv,60);});
+} else {
+  build();
+  setTimeout(initRv,60);
+}
 </script>
 </body>
 </html>
